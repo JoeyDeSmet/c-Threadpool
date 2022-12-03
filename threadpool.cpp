@@ -21,9 +21,6 @@ namespace Threading {
       std::unique_lock<std::mutex> lock(m_queue_mutex);
       m_should_terminate = true;
     }
-    
-    // Find better way to do this
-    queue_job([](){});
 
     m_new_jobs.notify_all();
 
@@ -56,7 +53,7 @@ namespace Threading {
       {
         std::unique_lock<std::mutex> lock(m_queue_mutex);
         m_new_jobs.wait(lock, [this]() {
-          return !m_jobs.empty();
+          return !m_jobs.empty() || m_should_terminate;
         });
 
         if (m_should_terminate) return;
