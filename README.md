@@ -43,4 +43,8 @@ int main() {
 
 ```
 
+## Compile example
 
+```bash
+g++ ./main.cpp ./threadpool.cpp -o threadpoolexample
+```
