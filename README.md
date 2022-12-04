@@ -1,7 +1,6 @@
 # Threadpool c++
 
 simple threadpool class to run jobs on different threads.
-There are some bugs.
 
 ## Example use
 
