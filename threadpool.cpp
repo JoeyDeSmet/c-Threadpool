@@ -24,11 +24,20 @@ namespace Threading {
 
     m_new_jobs.notify_all();
 
+    {
+      std::unique_lock<std::mutex> lock(m_buzy_mutex);
+      
+      m_buzy_jobs.wait(lock, [this]() {
+        std::unique_lock<std::mutex> lock(m_running_jobs_mutex);
+        return m_running_jobs == 0;
+      });
+    }
+    
     for (auto& thread : m_threads) thread.join();
     m_threads.clear();
   }
 
-  void ThreadPool::queue_job(const std::function<void()>& job) {
+  void ThreadPool::queue_job(const Job& job) {
     {
       std::unique_lock<std::mutex> lock(m_queue_mutex);
       m_jobs.push(job);
@@ -38,12 +47,8 @@ namespace Threading {
   }
 
   bool ThreadPool::busy(void) {
-    bool pool_busy;
-    {
-      std::unique_lock<std::mutex> lock(m_queue_mutex);
-      pool_busy = m_jobs.empty();
-    }
-    return pool_busy;
+    std::unique_lock<std::mutex> lock(m_queue_mutex);
+     return (!m_jobs.empty() || m_running_jobs > 0);
   }
 
   void ThreadPool::thread_loop(void) {
@@ -58,7 +63,7 @@ namespace Threading {
 
         if (m_should_terminate) return;
 
-        job = m_jobs.front();
+        job = m_jobs.top().job;
         m_jobs.pop();
 
         {

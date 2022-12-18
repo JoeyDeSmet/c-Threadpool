@@ -1,11 +1,14 @@
 #pragma once
 
+#include "job.hpp"
+
 #include <mutex>
 #include <queue>
 #include <thread>
 #include <cstdint>
 #include <functional>
 #include <condition_variable>
+
 
 namespace Threading {
 
@@ -38,7 +41,7 @@ namespace Threading {
        * @param job 
        * Job to be executed.
        */
-      void queue_job(const std::function<void()>& job);
+      void queue_job(const Job& job);
       
       /**
        * @brief 
@@ -93,7 +96,7 @@ namespace Threading {
       std::mutex m_queue_mutex;
       std::condition_variable m_new_jobs;
       std::vector<std::thread> m_threads;
-      std::queue<std::function<void()>> m_jobs;
+      std::priority_queue<Job, std::vector<Job>, JobComparator> m_jobs;
 
       std::mutex m_buzy_mutex;
       std::mutex m_running_jobs_mutex;
