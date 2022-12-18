@@ -1,6 +1,34 @@
 # Threadpool c++
 
-simple threadpool class to run jobs on different threads.
+This is an implementation of a thread pool in C++ that allows for the execution of a large number of tasks concurrently by a group of worker threads. The tasks are added to a queue and are assigned a priority level, with higher priority tasks being executed before lower priority tasks. The thread pool is useful for improving the performance of a program by allowing it to make use of multiple CPU cores and by minimizing the overhead of creating and destroying individual threads for each task.
+
+# Threading namespace
+
+The Threading namespace contains a few classes and enums related to thread management.
+
+## Enum: JobPriority
+
+This enum represents the priority of a Job in the ThreadPool. It has the following values:
+
+- HIGHEST
+- HIGH
+- MEDIUMHIGH
+- MEDIUM
+- MEDIUMLOW
+- LOW
+- LOWEST
+
+# Struct: Job
+
+The Job struct represents a unit of work that can be executed by a thread. It has the following fields:
+
+- priority: a JobPriority value representing the priority of the job.
+- name: a string representing the name of the job.
+- job: a function object representing the job to be executed.
+
+# ThreadPool class
+
+The ThreadPool class manages a pool of worker threads and allows you to queue up jobs to be executed by those threads.
 
 ## Example use
 
